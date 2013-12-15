@@ -2,8 +2,8 @@
 <strong>Add a new note</strong><BR><BR>
 
 <form id='formID' method='post' action='/notes/p_add'>
-
-	<textarea name='body' rows="4" cols="50" required></textarea>
+	Title: <input value='Untitled' type='text' name='title' required><BR>
+	<textarea name='body' rows="50" cols="50" required></textarea>
 
 	<input type='Submit' value='Add new note'>
  	<input type='reset' value='Reset'> 

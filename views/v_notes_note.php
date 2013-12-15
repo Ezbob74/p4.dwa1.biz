@@ -1,0 +1,1 @@
+the new Note is <?=$note_body?>.

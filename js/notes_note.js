@@ -1,9 +1,9 @@
 // Set up the options for ajax
 var options = { 
     type: 'POST',
-    url: '/notes/p_add/',
+    url: '/notes/note/',
     beforeSubmit: function() {
-        $('#results').html("Adding...");
+        $('#results').html("........");
     },
     success: function(response) {   
         // Whatever is echo'd out from the page we're calling will be

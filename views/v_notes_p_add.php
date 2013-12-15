@@ -1,0 +1,1 @@
+Your post was created on <?=Time::display($created);?>; the new post id is <?=$new_note_id?>.

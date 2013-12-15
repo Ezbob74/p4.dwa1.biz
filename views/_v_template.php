@@ -16,65 +16,12 @@
 <body>	
 	
 
-	<?php if(isset($client_files_body)) echo $client_files_body; ?>
-	<!-- Begin Wrapper -->
-   <div id="wrapper">
-   
-         <!-- Begin Header -->
-         <div id="header">
+	
+   <!-- Begin Wrapper -->
+	<?php if(isset($content)) echo $content; ?>
 		 
-		       4EverNote		 
-			   
-		 </div>
-		 <!-- End Header -->
-		 <div id='test'>
-		 <!-- Begin Left Column -->
-		 <div id="leftcolumn">
-		 
-		       Left Column
-		 
-		 </div>
-		 <!-- End Left Column -->
-		 
-		 <!-- Begin Left Middle Column -->
-		 <div id="leftmiddle">
-		       
-               Left Middle
-
-         </div>
-		 <!-- End Left Middle Column -->
-		 
-		 <!-- Begin Right Middle Column -->
-		 <div id="rightmiddle">
-		 
-		       	<!--Display content-->
-				<?php if(isset($content)) echo $content; ?>
-		 
-		 </div>
-		 <!-- End Right Middle Column -->
-		 
-		 <!-- Begin Right Column 
-		 <div id="rightcolumn">
-		 
-		       Right Column
-		 
-		 </div>-->
-		 <!-- End Right Column -->
-		 </div>
-		 <!-- Begin Footer -->
-		 <div id="footer">
-		       
-			   <!--Display footer-->
-				Project 4 :: Dynamic Web Applications :: Harvard Extension School ::  Babak Mansouri
-    
-			
-			    
-	     </div>
-		 <!-- End Footer -->
-		 
-   </div>
    <!-- End Wrapper -->
-
+<?php if(isset($client_files_body)) echo $client_files_body; ?>
 
 </body>
 </html>
