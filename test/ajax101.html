@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+		
+</head>
+
+<body>
+
+	<form>
+		<input type='text' name='name' id='name'>
+	
+		<div id='response'></div>
+		<input type='submit'>
+	</form>
+	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src='jquery.form.js'></script>
+	
+	<script>
+	
+		var options = {
+			type: 'post',
+			url: 'process.php',
+			success: function(response) {
+				$('#response').html(response);
+			}	
+		};
+	
+		$('form').ajaxForm(options);
+	
+		/*
+		$('button').click(function() {
+			
+			$.ajax({
+				type:'POST',
+				url: 'process.php',
+				success: function(results) {
+					$('#response').html(results);
+				},
+				data: {
+					name: $('#name').val()
+				}
+			});
+		
+		});
+		*/
+	
+	</script>
+	
+	
+</body>
+</html>

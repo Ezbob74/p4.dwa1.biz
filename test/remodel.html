@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>Remodel Calculator</title> 
+
+	<link rel="stylesheet" href="" type="text/css">
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	
+</head>
+
+<body>
+
+	Budget $<input type='text' id='budget'><br><br>
+	
+	Rooms:<br> 
+	<select id='room_count'>
+		<option value='1'>Room 1</option>
+		<option value='2'>Room 2</option>
+		<option value='3'>Room 3</option>
+	</select>
+
+	<br><br>
+	Service:<br>
+	<input type='checkbox' name='services' value='300'>Painting<br>
+	<input type='checkbox' name='services' value='700'>Flooring<br>
+	<input type='checkbox' name='services' value='300'>Wiring<br>
+	<input type='checkbox' name='services' value='600'>Windows<br>
+
+	<br><br>
+		
+	<button>Recalculate</button>
+	
+	Total: $<span id='output'></span>
+
+	<script>  
+	
+		/*-------------------------------------------------------------------------------------------------
+		Listeners
+		-------------------------------------------------------------------------------------------------*/
+		$('button').click(calculate);
+		$('input,select').change(calculate);
+		
+		
+		/*-------------------------------------------------------------------------------------------------
+		
+		-------------------------------------------------------------------------------------------------*/
+		function calculate() {
+			
+			var budget   = $('#budget').val();
+			var rooms    = $('#room_count').val();
+			var services = $('input[name=services]:checked');
+			var total    = 0;
+			
+			services.each(function() {
+				
+				var price = $(this).val();
+				
+				var amount = price * rooms;
+				
+				total = total + amount;
+				
+			}); // end of loop
+			
+			$('#output').html(total);
+			
+		}
+		
+	
+	</script>	
+
+</body>  
+</html>
