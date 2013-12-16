@@ -26,7 +26,7 @@
 				 	<!-- Show posts and display a link to users profile -->
 				<?php foreach($notes as $note): ?>
 
-				<div id='notes'><strong><a href='/notes/note/<?=$note['note_id']?>'><?=$note['title']?></a></strong><BR>
+				<div id='notes'><strong><a href='/notes/index/<?=$note['note_id']?>'><?=$note['title']?></a></strong><BR>
 
 				</div><br><br>
 				
@@ -47,15 +47,22 @@
 		 <?php if($currentnote): ?>
 				<strong>Current Note </strong><BR><BR>
 				 	<!-- Show posts and display a link to users profile -->
+				
+
 				<?php foreach($currentnote as $cnote): ?>
+				<form id='formID' method='post' action='/notes/note/<?=$cnote['title']?>'>
+    			<div id='note'>Title: <input value='<?=$cnote['title']?>' type='text' name='title' required><BR>
+				<textarea name='body' rows="20" cols="50" required><?=$cnote['body']?></textarea>
+				<input value='<?=$cnote['notebook_id']?>' type='text' name='notebook_id' hidden>
+				<input value='<?=$cnote['note_id']?>' type='text' name='note_id' hidden>
+				<input type='Submit' value='Save the note'>
 
-				<div id='note'><strong><a href='/users/profile/<?=$post['email']?>'><?=$post['first_name']?></a></strong><BR>
-
-				<?=$cnote['body']?></div><br><br>
+				</div><br><br>
 				
 
 				<?php endforeach; ?>
-				
+		</form>
+
 		<?php else: ?>
 						There are no notes from you. Create a Note.
 		<?php endif; ?> 

@@ -59,7 +59,14 @@ class users_controller extends base_controller {
             $_POST['token']= sha1(TOKEN_SALT.$_POST['email'].Utils::generate_random_string()); 
 
         # add user to the database and redirect to users login page        
-            DB::instance(DB_NAME)->insert_row('users',$_POST);
+            $user_id=DB::instance(DB_NAME)->insert_row('users',$_POST);
+        # Create users first Notebook
+            $notebook['name']= $_POST['first_name'].' Notebook';
+            $notebook['user_id']= $user_id;
+            $notebook['created']= Time::now(); 
+            $notebook['modified']= Time::now(); 
+            DB::instance(DB_NAME)->insert_row('notebooks',$notebook);  
+
             Router::redirect('/users/login');
         }
         

@@ -15,3 +15,9 @@ var options = {
 
 // Using the above options, ajax'ify the form
 $('form').ajaxForm(options);
+
+//$('#notes').mousedown(function() {
+//    console.log("notes was clicked");
+//    $('#formID').submit(); 
+    
+//});
