@@ -58,7 +58,7 @@
 				<input type='Submit' value='Save the note'>
 
 				</div><br><br>
-				
+				<div id='results'><BR></div>
 
 				<?php endforeach; ?>
 		</form>
@@ -69,7 +69,7 @@
 		       
 		 
 		 </div>
-		 <div id='results'></div>
+		 
 		 <!-- End Right Middle Column -->
 		 
 		 <!-- Begin Right Column 

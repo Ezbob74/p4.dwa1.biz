@@ -87,9 +87,6 @@ class notes_controller extends base_controller {
 
         }
 
-
-
-
         $q = "SELECT *
             FROM notes 
             WHERE note_id=".$_POST['note_id'];
@@ -106,7 +103,7 @@ class notes_controller extends base_controller {
         # Pass data to the view
         //$view->created     = $_POST['created'];
         $view->note_body = $note['body'];
-
+        $view->created = Time::display(Time::now());
         # Render the view
         echo $view;     
 
@@ -146,7 +143,8 @@ class notes_controller extends base_controller {
 		$_POST['modified'] = Time::now();
         $_POST['title'] = strip_tags($_POST['title']);
         $_POST['title'] = Utils::make_urls_links($_POST['title']);
-        $_POST['notebook_id'] = DB::instance(DB_NAME)->select_field('SELECT notebook_id FROM notebooks WHERE user_id = '.$_POST['user_id'].' ORDER BY 
+        $_POST['notebook_id'] = DB::instance(DB_NAME)->select_field('SELECT notebook_id FROM notebooks 
+                                WHERE user_id = '.$_POST['user_id'].' ORDER BY 
                                 created  LIMIT 1');;
         
         # insert the notes
@@ -156,7 +154,7 @@ class notes_controller extends base_controller {
         $view = View::instance('v_notes_p_add');
 
         # Pass data to the view
-        $view->created     = $_POST['created'];
+        $view->created = Time::display(Time::now());
         $view->new_note_id = $new_note_id;
 
         # Render the view

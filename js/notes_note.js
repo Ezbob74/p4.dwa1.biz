@@ -21,3 +21,12 @@ $('form').ajaxForm(options);
 //    $('#formID').submit(); 
     
 //});
+
+$('#leftmiddle').height($('#rightmiddle').height());
+$('#leftcolumn').height($('#rightmiddle').height());
+$("textarea").onresize({
+    resize: function() {
+        $('#leftmiddle').height($('#rightmiddle').height());
+        $('#leftcolumn').height($('#rightmiddle').height());
+    }
+});

@@ -1,1 +1,1 @@
-the new Note is <?=$note_body?>.
+This Note is updated at <?=$created?>.
