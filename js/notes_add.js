@@ -1,4 +1,5 @@
 // Set up the options for ajax
+/*
 var options = { 
     type: 'POST',
     url: '/notes/p_add/',
@@ -15,3 +16,12 @@ var options = {
 
 // Using the above options, ajax'ify the form
 $('form').ajaxForm(options);
+*/
+$('#rightmiddle').height($('#leftmiddle').height());
+$('#leftcolumn').height($('#rightmiddle').height());
+$("textarea").onresize({
+    resize: function() {
+        $('#leftmiddle').height($('#rightmiddle').height());
+        $('#leftcolumn').height($('#rightmiddle').height());
+    }
+});

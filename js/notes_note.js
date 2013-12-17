@@ -10,6 +10,7 @@ var options = {
         // returned as the parameter "response".
         // Let's inject that data into the page 
         $('#results').html(response);
+      
     } 
 }; 
 
@@ -22,7 +23,8 @@ $('form').ajaxForm(options);
     
 //});
 
-$('#leftmiddle').height($('#rightmiddle').height());
+
+$('#rightmiddle').height($('#leftmiddle').height());
 $('#leftcolumn').height($('#rightmiddle').height());
 $("textarea").onresize({
     resize: function() {
@@ -30,3 +32,6 @@ $("textarea").onresize({
         $('#leftcolumn').height($('#rightmiddle').height());
     }
 });
+
+
+

@@ -16,43 +16,54 @@ class notes_controller extends base_controller {
 
          # Set up the View
         $this->template->content = View::instance('v_notes_index');
-        $this->template->title   = APP_NAME. " :: All Notes";
-
-        # Query notes to get the users notes
-
+        
         $q = 'SELECT *
-            FROM notes
-            WHERE notes.user_id = '.$this->user->user_id;
-         // echo $q;
-        # Run the query, store the results in the variable $notes
+                    FROM notes
+                    WHERE notes.user_id = '.$this->user->user_id.'
+                        ORDER BY notes.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
         
 
-        if (!$note_id){
-        $q = 'SELECT * 
-                FROM notes
-                WHERE notes.user_id = '.$this->user->user_id .'
-                ORDER BY notes.modified DESC
-                LIMIT 1';
-        }
-        else{
-            $q = 'SELECT * 
-                FROM notes
-                WHERE notes.note_id = '.$note_id ;
-              //  ORDER BY notes.modified DESC
-              //  LIMIT 1';
-        }
+        
+       
+            $this->template->title   = APP_NAME. " :: All Notes";
+
+            # Query notes to get the users notes
+
+              
+
+            if (!$note_id){
+                $q = 'SELECT * 
+                        FROM notes
+                        WHERE notes.user_id = '.$this->user->user_id .'
+                        ORDER BY notes.modified DESC
+                        LIMIT 1';
+            }
+            else{
+                $q = 'SELECT * 
+                    FROM notes
+                    WHERE notes.note_id = '.$note_id ;
+                  //  ORDER BY notes.modified DESC
+                  //  LIMIT 1';
+            }
                 
         # Execute this query with the select_array method
         #
                // echo $q;
-        $currentnote = DB::instance(DB_NAME)->select_rows($q);
+            $currentnote = DB::instance(DB_NAME)->select_rows($q);
         # Pass data to the View
        // if( empty( $currentnote ) ){
        // echo "empty";}
 
+        
+            $this->template->content->currentnote=$currentnote;
+            $this->template->content->note_id = $note_id;
+        
+        
         $this->template->content->notes = $notes;
-        $this->template->content->currentnote=$currentnote;
+        $this->template->content->newnote = 1;
         # Render the View
         # Load JS files
         $client_files_body = Array("/js/jquery.form.js",
@@ -68,33 +79,38 @@ class notes_controller extends base_controller {
     }
     public function note($note_id){
         # looks for urls and make them links , also strip tags    
-        if (!empty($_POST)){
-        $_POST['body'] = strip_tags($_POST['body']);
-        $_POST['body'] = Utils::make_urls_links($_POST['body']);
-        //$_POST['user_id'] = $this->user->user_id;
-        //$_POST['created'] = Time::now();
-        $_POST['modified'] = Time::now();
-        $_POST['title'] = strip_tags($_POST['title']);
-        $_POST['title'] = Utils::make_urls_links($_POST['title']);
         
         
-        $where_condition = 'WHERE note_id = '.$_POST['note_id'];
-        # insert the notes
-        DB::instance(DB_NAME)->update_row('notes',$_POST,$where_condition);
-        }
-        else{
-            $_POST['note_id']=$note_id;
 
-        }
 
-        $q = "SELECT *
-            FROM notes 
-            WHERE note_id=".$_POST['note_id'];
+                if (!empty($_POST)){
+                        $_POST['body'] = strip_tags($_POST['body']);
+                        $_POST['body'] = Utils::make_urls_links($_POST['body']);
+                        //$_POST['user_id'] = $this->user->user_id;
+                        //$_POST['created'] = Time::now();
+                        $_POST['modified'] = Time::now();
+                        $_POST['title'] = strip_tags($_POST['title']);
+                        $_POST['title'] = Utils::make_urls_links($_POST['title']);
+                   // echo "update";    
+                        
+                        $where_condition = 'WHERE note_id = '.$_POST['note_id'];
+                        # insert the notes
+                        DB::instance(DB_NAME)->update_row('notes',$_POST,$where_condition);
+                }
+                else{
+                        $_POST['note_id']=$note_id;
 
-        # Execute the query to get all the users. 
-        # Store the result array in the variable $users
-        $note = DB::instance(DB_NAME)->select_row($q);
+                }
 
+                $q = "SELECT *
+                    FROM notes 
+                    WHERE note_id=".$_POST['note_id'];
+
+                # Execute the query to get all the users. 
+                # Store the result array in the variable $users
+                $note = DB::instance(DB_NAME)->select_row($q);
+
+            
         //$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
         //echo "Your post was added";
         # Set up the view
@@ -109,7 +125,7 @@ class notes_controller extends base_controller {
 
 
 
-       //  Router::redirect('/notes/');   
+       // Router::redirect('/notes/note');   
     }
 
 
@@ -124,11 +140,21 @@ class notes_controller extends base_controller {
         //                     '/css/validationEngine.jquery.css'
          //                    );
         # Load JS files
+         $q = 'SELECT *
+                    FROM notes
+                    WHERE notes.user_id = '.$this->user->user_id.'
+                        ORDER BY notes.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
+        $notes = DB::instance(DB_NAME)->select_rows($q);
+
+
         $client_files_body = Array("/js/jquery.form.js",
                             "/js/notes_add.js"
                             );
       //  $this->template->client_files_head=Utils::load_client_files($client_files_head);
         $this->template->client_files_body = Utils::load_client_files($client_files_body); 
+        $this->template->content->notes = $notes;
 		echo $this->template;
 
 	}
@@ -151,18 +177,18 @@ class notes_controller extends base_controller {
 		$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
 	    //echo "Your post was added";
         # Set up the view
-        $view = View::instance('v_notes_p_add');
+       // $view = View::instance('v_notes_p_add');
 
         # Pass data to the view
-        $view->created = Time::display(Time::now());
-        $view->new_note_id = $new_note_id;
+        // $view->created = Time::display(Time::now());
+        //$view->new_note_id = $new_note_id;
 
         # Render the view
-        echo $view;     
+        //echo $view;     
 
 
 
-       //  Router::redirect('/notes/');   
+         Router::redirect('/notes/');   
 	}
     
  

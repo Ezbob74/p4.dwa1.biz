@@ -1,6 +1,6 @@
 
 
-<div id="wrapper">
+	<div id="wrapper">
    
          <!-- Begin Header -->
          <div id="header">
@@ -9,7 +9,7 @@
 			   
 		 </div>
 		 <!-- End Header -->
-		 <div id='test'>
+		 
 		 <!-- Begin Left Column -->
 		 <div id="leftcolumn">
 		 
@@ -21,6 +21,7 @@
 		 <!-- Begin Left Middle Column -->
 		 <div id="leftmiddle">
 		      <!--Display content-->
+		      <div id='notes'><strong><a href='/notes/add'>Add Note</a></strong><BR></div><br><br>
 				<?php if($notes): ?>
 				<strong>Your Notes </strong><BR><BR>
 				 	<!-- Show posts and display a link to users profile -->
@@ -45,23 +46,26 @@
 		 <div id="rightmiddle">
 		
 		 <?php if($currentnote): ?>
-				<strong>Current Note </strong><BR><BR>
-				 	<!-- Show posts and display a link to users profile -->
-				
-
-				<?php foreach($currentnote as $cnote): ?>
+		 		<?php foreach($currentnote as $cnote): ?>
+				<strong>Note </strong><BR><BR> <a href='/notes/delete/<?=$cnote['note_id']?>'>Delete Note</a>
+				<!-- Show notes and display a link to users profile -->
 				<form id='formID' method='post' action='/notes/note/<?=$cnote['title']?>'>
-    			<div id='note'>Title: <input value='<?=$cnote['title']?>' type='text' name='title' required><BR>
+    			Title: <BR>
+    			<input value='<?=$cnote['title']?>' type='text' name='title' required><BR>
+				Body: <BR>
 				<textarea name='body' rows="20" cols="50" required><?=$cnote['body']?></textarea>
 				<input value='<?=$cnote['notebook_id']?>' type='text' name='notebook_id' hidden>
 				<input value='<?=$cnote['note_id']?>' type='text' name='note_id' hidden>
-				<input type='Submit' value='Save the note'>
+				<BR><BR>
 
-				</div><br><br>
+				<input type='Submit' value='Save Note'>
+				</form>
+				<br><br>
 				<div id='results'><BR></div>
 
 				<?php endforeach; ?>
-		</form>
+				
+		
 
 		<?php else: ?>
 						There are no notes from you. Create a Note.
@@ -79,7 +83,7 @@
 		 
 		 </div>-->
 		 <!-- End Right Column -->
-		 </div>
+		 
 		 
 		 <!-- Begin Footer -->
 		 <div id="footer">
@@ -92,4 +96,4 @@
 	     </div>
 		 <!-- End Footer -->
 		 
-   </div>
+	</div>
