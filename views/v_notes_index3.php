@@ -1,8 +1,10 @@
 		 <?php if($currentnote): ?>
 		 		<?php foreach($currentnote as $cnote): ?>
+
 				<strong>Note </strong><BR><BR> <a href='/notes/delete/<?=$cnote['note_id']?>'>Delete Note</a>
 				<!-- Show notes and display a link to users profile -->
 				<form id='formID' method='post' action='/notes/note/'>
+					
     			Title: <BR>
     			<input value='<?=$cnote['title']?>' type='text' name='title' required><BR>
 				Body: <BR>

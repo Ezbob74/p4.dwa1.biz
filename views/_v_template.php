@@ -22,7 +22,7 @@
    
          <!-- Begin Header -->
          <div id="header">
-		 
+		 		4EverNote
 		       <?php if(isset($contentheader)) echo $contentheader; ?>	 
 			   
 		 </div>

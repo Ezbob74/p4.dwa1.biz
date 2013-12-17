@@ -64,6 +64,9 @@ class notes_controller extends base_controller {
         #
                // echo $q;
             $currentnote = DB::instance(DB_NAME)->select_rows($q);
+
+            
+
         # Pass data to the View
        // if( empty( $currentnote ) ){
        // echo "empty";}
@@ -161,7 +164,7 @@ class notes_controller extends base_controller {
                     WHERE notes.user_id = '.$this->user->user_id.'
                         ORDER BY notes.modified DESC';
                  // echo $q;
-                # Run the query, store the results in the variable $notes
+                # Run the query, store the results in the variable 
         $notes = DB::instance(DB_NAME)->select_rows($q);
 
         $q = 'SELECT *
@@ -169,7 +172,7 @@ class notes_controller extends base_controller {
                     WHERE notebooks.user_id = '.$this->user->user_id.'
                         ORDER BY notebooks.modified DESC';
                  // echo $q;
-                # Run the query, store the results in the variable $notes
+                # Run the query, store the results in the variable 
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
 
 

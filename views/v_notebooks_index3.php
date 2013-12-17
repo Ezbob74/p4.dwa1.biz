@@ -1,6 +1,7 @@
 		 <?php if($currentnotebook): ?>
 		 		<?php foreach($currentnotebook as $cnotebook): ?>
 				<strong>Note </strong><BR><BR> <a href='/notebooks/delete/<?=$cnotebook['notebook_id']?>'>Delete Notebook</a>
+				
 				<!-- Show notes and display a link to users profile -->
 				<form id='formID' method='post' action='/notebooks/notebook/<?=$cnotebook['notebook_id']?>'>
     			Name: <BR>
