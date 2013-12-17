@@ -15,8 +15,13 @@ class notes_controller extends base_controller {
         
 
          # Set up the View
-        $this->template->content = View::instance('v_notes_index');
-        
+        $this->template->content1 = View::instance('v_notes_index1');
+       //test
+        $this->template->content2 = View::instance('v_notes_index2');
+
+        $this->template->content3 = View::instance('v_notes_index3');
+
+
         $q = 'SELECT *
                     FROM notes
                     WHERE notes.user_id = '.$this->user->user_id.'
@@ -24,8 +29,14 @@ class notes_controller extends base_controller {
                  // echo $q;
                 # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
-        
-
+                
+        $q = 'SELECT *
+                    FROM notebooks
+                    WHERE notebooks.user_id = '.$this->user->user_id.'
+                        ORDER BY notebooks.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
+        $notebooks = DB::instance(DB_NAME)->select_rows($q);
         
        
             $this->template->title   = APP_NAME. " :: All Notes";
@@ -56,14 +67,16 @@ class notes_controller extends base_controller {
         # Pass data to the View
        // if( empty( $currentnote ) ){
        // echo "empty";}
+        $this->template->content2->newnote = 1;
+        $this->template->content2->note_id = $note_id;
+        
+        $this->template->content3->currentnote=$currentnote;
+        $this->template->content1->notebooks = $notebooks;
+        $this->template->content2->notes = $notes;
+        
+        //test
+       
 
-        
-            $this->template->content->currentnote=$currentnote;
-            $this->template->content->note_id = $note_id;
-        
-        
-        $this->template->content->notes = $notes;
-        $this->template->content->newnote = 1;
         # Render the View
         # Load JS files
         $client_files_body = Array("/js/jquery.form.js",
@@ -132,7 +145,10 @@ class notes_controller extends base_controller {
     # this function is to to view the add posts    
 	public function add() {
 
-		$this->template->content = View::instance("v_notes_add");
+		$this->template->content1 = View::instance("v_notes_index1");
+        $this->template->content2 = View::instance("v_notes_index2");
+        $this->template->content3 = View::instance("v_notes_add3");
+
         $this->template->title= APP_NAME. " :: Add Note ";
         // add required js and css files to be used in the form
      //   $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
@@ -148,14 +164,25 @@ class notes_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
 
+        $q = 'SELECT *
+                    FROM notebooks
+                    WHERE notebooks.user_id = '.$this->user->user_id.'
+                        ORDER BY notebooks.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
+        $notebooks = DB::instance(DB_NAME)->select_rows($q);
+
 
         $client_files_body = Array("/js/jquery.form.js",
                             "/js/notes_add.js"
                             );
       //  $this->template->client_files_head=Utils::load_client_files($client_files_head);
         $this->template->client_files_body = Utils::load_client_files($client_files_body); 
-        $this->template->content->notes = $notes;
-		echo $this->template;
+
+        $this->template->content2->notes = $notes;
+		$this->template->content1->notebooks = $notebooks;
+
+        echo $this->template;
 
 	}
 
@@ -177,18 +204,18 @@ class notes_controller extends base_controller {
 		$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
 	    //echo "Your post was added";
         # Set up the view
-       // $view = View::instance('v_notes_p_add');
+       //$view = View::instance('v_notes_p_add');
 
         # Pass data to the view
         // $view->created = Time::display(Time::now());
         //$view->new_note_id = $new_note_id;
 
         # Render the view
-        //echo $view;     
+       // echo $view;     
 
 
 
-         Router::redirect('/notes/');   
+         Router::redirect('/notes/index');   
 	}
     
  
