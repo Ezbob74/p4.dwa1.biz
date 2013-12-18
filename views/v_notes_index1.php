@@ -1,11 +1,11 @@
 
-		        <div id='notebooks'><strong><a href='/notebooks/add'>Add Notebook</a></strong><BR></div><br><br>
+		        <div id='notebooks'></div>
 				<?php if($notebooks): ?>
-				<strong>Your Notebooks </strong><BR><BR>
+				<strong>Notebooks </strong><BR><BR>
 				 	<!-- Show posts and display a link to users profile -->
 				<?php foreach($notebooks as $notebook): ?>
 
-				<div id='notes'><strong><a href='/notebooks/index/<?=$notebook['notebook_id']?>'><?=$notebook['name']?></a></strong><BR>
+				<div id='notes'><strong><a class="nav-link" href='/notebooks/index/<?=$notebook['notebook_id']?>'><?=$notebook['name']?></a></strong><BR>
 
 				</div><br><br>
 				

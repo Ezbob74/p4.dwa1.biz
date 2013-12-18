@@ -245,6 +245,12 @@ class notebooks_controller extends base_controller {
         $where_condition = 'WHERE user_id = '.$this->user->user_id.' AND notebook_id = '.$notebook_id;
         DB::instance(DB_NAME)->delete('notebooks', $where_condition);}
 
+        else
+        {
+
+            // This is the last notebook and it cant be deleted
+        }
+
         
         # Send them back to users own post list
         Router::redirect("/notes/index");

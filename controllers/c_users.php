@@ -16,7 +16,7 @@ class users_controller extends base_controller {
     }
     # this sets up signup view, loads js and css and captures errors
     public function signup($error = NULL) {
-        $this->template->content=View::instance('v_users_signup');
+        $this->template->content3=View::instance('v_users_signup');
 
         $this->template->title= APP_NAME. " :: Sign up";
             // add required js and css files to be used in the form
@@ -26,7 +26,7 @@ class users_controller extends base_controller {
 
         $this->template->client_files_head=Utils::load_client_files($client_files_head);
         # error checking passed to view
-        $this->template->content->error = $error;
+        $this->template->content3->error = $error;
         echo $this->template;
     }
 
@@ -75,7 +75,7 @@ class users_controller extends base_controller {
     # sets up login view and shows error using the view 
     public function login($error = NULL) {
         
-        $this->template->content=View::instance('v_users_login');    
+        $this->template->content3=View::instance('v_users_login');    
         $this->template->title= APP_NAME. " :: Login";
         // add required js and css files to be used in the form
         $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
@@ -84,7 +84,7 @@ class users_controller extends base_controller {
                              );
         $this->template->client_files_head=Utils::load_client_files($client_files_head);    
         # Pass data to the view
-        $this->template->content->error = $error;
+        $this->template->content3->error = $error;
 
         echo $this->template;
 
@@ -235,7 +235,7 @@ class users_controller extends base_controller {
 
         }
         # Create a new View instance
-        $this->template->content=View::instance('v_users_editprofile');    
+        $this->template->content3=View::instance('v_users_editprofile');    
         # Page title  
         $this->template->title= APP_NAME. ":: Edit Profile";
         // add required js and css files to be used in the form

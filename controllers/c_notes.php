@@ -74,8 +74,11 @@ class notes_controller extends base_controller {
         $this->template->content2->note_id = $note_id;
         
         $this->template->content3->currentnote=$currentnote;
+        $this->template->content3->notebooks = $notebooks;
+
         $this->template->content1->notebooks = $notebooks;
         $this->template->content2->notes = $notes;
+
         
         //test
        
