@@ -17,7 +17,7 @@
 <body>	
 
    <!-- Begin Wrapper -->
-		<body>
+		
 		 <div id="container">
 		<!-- Begin Header -->
 		 <div id="header">
