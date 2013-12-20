@@ -38,8 +38,15 @@ class notes_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
         
+        $q = 'SELECT *
+                    FROM tags
+                    WHERE tags.user_id = '.$this->user->user_id.'
+                        ORDER BY tags.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
+        $tags = DB::instance(DB_NAME)->select_rows($q);
        
-            $this->template->title   = APP_NAME. " :: All Notes";
+        $this->template->title   = APP_NAME. " :: All Notes";
 
             # Query notes to get the users notes
 
@@ -70,13 +77,13 @@ class notes_controller extends base_controller {
         # Pass data to the View
        // if( empty( $currentnote ) ){
        // echo "empty";}
-        $this->template->content2->newnote = 1;
-        $this->template->content2->note_id = $note_id;
+      
         
         $this->template->content3->currentnote=$currentnote;
         $this->template->content3->notebooks = $notebooks;
 
         $this->template->content1->notebooks = $notebooks;
+         $this->template->content1->tags = $tags;
         $this->template->content2->notes = $notes;
 
         
@@ -171,6 +178,14 @@ class notes_controller extends base_controller {
         $notes = DB::instance(DB_NAME)->select_rows($q);
 
         $q = 'SELECT *
+                    FROM tags
+                    WHERE tags.user_id = '.$this->user->user_id.'
+                        ORDER BY tags.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
+        $tags = DB::instance(DB_NAME)->select_rows($q);
+
+        $q = 'SELECT *
                     FROM notebooks
                     WHERE notebooks.user_id = '.$this->user->user_id.'
                         ORDER BY notebooks.modified DESC';
@@ -187,6 +202,7 @@ class notes_controller extends base_controller {
 
         $this->template->content2->notes = $notes;
 		$this->template->content1->notebooks = $notebooks;
+        $this->template->content1->tags=$tags;
 
         echo $this->template;
 

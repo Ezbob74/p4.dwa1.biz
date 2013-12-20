@@ -1,7 +1,7 @@
 // Set up the options for ajax
 var options = { 
     type: 'POST',
-    url: '/notebooks/notebook/',
+    url: '/tags/tag/',
     beforeSubmit: function() {
         $('#results').html("........");
     },

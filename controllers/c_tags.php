@@ -1,7 +1,7 @@
 <?php 
-# This is the notes controller
+# This is the tags controller
 
-class notebooks_controller extends base_controller {
+class tags_controller extends base_controller {
 	
     public function __construct() {
         parent::__construct();
@@ -11,7 +11,7 @@ class notebooks_controller extends base_controller {
     	}
     } 
 # View the user's notebooks
-    public function index($notebook_id){
+    public function index($tag_id){
         
 
          # Set up the View
@@ -19,7 +19,7 @@ class notebooks_controller extends base_controller {
        //test
         $this->template->content2 = View::instance('v_notes_index2');
 
-        $this->template->content3 = View::instance('v_notebooks_index3');
+        $this->template->content3 = View::instance('v_tags_index3');
 
 
         $q = 'SELECT *
@@ -29,6 +29,14 @@ class notebooks_controller extends base_controller {
                  // echo $q;
                 # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
+                
+        $q = 'SELECT *
+                    FROM notebooks
+                    WHERE notebooks.user_id = '.$this->user->user_id.'
+                        ORDER BY notebooks.modified DESC';
+                 // echo $q;
+                # Run the query, store the results in the variable $notes
+        $notebooks = DB::instance(DB_NAME)->select_rows($q);
         
         $q = 'SELECT *
                     FROM tags
@@ -38,33 +46,23 @@ class notebooks_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $tags = DB::instance(DB_NAME)->select_rows($q);
        
-
-        $q = 'SELECT *
-                    FROM notebooks
-                    WHERE notebooks.user_id = '.$this->user->user_id.'
-                        ORDER BY notebooks.modified DESC';
-                 // echo $q;
-                # Run the query, store the results in the variable $notes
-        $notebooks = DB::instance(DB_NAME)->select_rows($q);
-        
-       
-            $this->template->title   = APP_NAME. " :: Notebooks";
+        $this->template->title   = APP_NAME. " :: Notebooks";
 
             # Query notes to get the users notes
 
               
 
-            if (!$notebook_id){
+        if (!$tag_id){
                 $q = 'SELECT * 
-                        FROM notebooks
-                        WHERE notes.user_id = '.$this->user->user_id .'
-                        ORDER BY notebooks.modified DESC
+                        FROM tags
+                        WHERE tags.user_id = '.$this->user->user_id .'
+                        ORDER BY tags.modified DESC
                         LIMIT 1';
             }
-            else{
+        else{
                 $q = 'SELECT * 
-                    FROM notebooks
-                    WHERE notebooks.notebook_id = '.$notebook_id ;
+                    FROM tags
+                    WHERE tags.tag_id = '.$tag_id ;
                   //  ORDER BY notes.modified DESC
                   //  LIMIT 1';
             }
@@ -72,15 +70,15 @@ class notebooks_controller extends base_controller {
         # Execute this query with the select_array method
         #
                // echo $q;
-            $currentnotebook = DB::instance(DB_NAME)->select_rows($q);
+        $currenttag = DB::instance(DB_NAME)->select_rows($q);
         # Pass data to the View
        // if( empty( $currentnote ) ){
        // echo "empty";}
+        $this->template->content1->tags = $tags;   
         $this->template->content2->newnote = 1;
         $this->template->content3->notebook_id = $notebook_id;
         
-        $this->template->content3->currentnotebook=$currentnotebook;
-        $this->template->content1->tags=$tags;
+        $this->template->content3->currenttag=$currenttag;
         $this->template->content1->notebooks = $notebooks;
         $this->template->content2->notes = $notes;
         
@@ -90,7 +88,7 @@ class notebooks_controller extends base_controller {
         # Render the View
         # Load JS files
         $client_files_body = Array("/js/jquery.form.js",
-                                   "/js/notebooks_note.js"
+                                   "/js/tags_tag.js"
                                     );
         //  $this->template->client_files_head=Utils::load_client_files($client_files_head);
         $this->template->client_files_body = Utils::load_client_files($client_files_body); 
@@ -157,9 +155,9 @@ class notebooks_controller extends base_controller {
 
         $this->template->content1 = View::instance("v_notes_index1");
         $this->template->content2 = View::instance("v_notes_index2");
-		$this->template->content3 = View::instance("v_notebooks_add3");
+		$this->template->content3 = View::instance("v_tags_add3");
 
-        $this->template->title= APP_NAME. " :: Add Notebook ";
+        $this->template->title= APP_NAME. " :: Add tag ";
         // add required js and css files to be used in the form
      //   $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
        //                      '/js/jquery.validationEngine.js',
@@ -173,7 +171,6 @@ class notebooks_controller extends base_controller {
                  // echo $q;
                 # Run the query, store the results in the variable $notes
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
-
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
@@ -181,7 +178,6 @@ class notebooks_controller extends base_controller {
                  // echo $q;
                 # Run the query, store the results in the variable $notes
         $tags = DB::instance(DB_NAME)->select_rows($q);
-
 
         $q = 'SELECT *
                     FROM notes
@@ -198,8 +194,8 @@ class notebooks_controller extends base_controller {
       //  $this->template->client_files_head=Utils::load_client_files($client_files_head);
         $this->template->client_files_body = Utils::load_client_files($client_files_body); 
 
-        $this->template->content1->notebooks = $notebooks;
-        $this->template->content1->tags=$tags;        
+        $this->template->content1->notebooks = $notebooks;  
+        $this->template->content1->tags = $tags;        
         $this->template->content2->notes = $notes;
 		echo $this->template;
 
@@ -208,8 +204,8 @@ class notebooks_controller extends base_controller {
     #    this function is to add notes   
 	public function p_add(){
         # looks for urls and make them links , also strip tags    
-		$_POST['name'] = strip_tags($_POST['name']);
-        $_POST['name'] = Utils::make_urls_links($_POST['name']);
+		$_POST['tag'] = strip_tags($_POST['tag']);
+        $_POST['tag'] = Utils::make_urls_links($_POST['tag']);
         $_POST['user_id'] = $this->user->user_id;
 		$_POST['created'] = Time::now();
 		$_POST['modified'] = Time::now();
@@ -219,7 +215,7 @@ class notebooks_controller extends base_controller {
            //                     created  LIMIT 1');;
         
         # insert the notes
-		$new_note_id = DB::instance(DB_NAME)->insert('notebooks',$_POST);
+		$new_note_id = DB::instance(DB_NAME)->insert('tags',$_POST);
 	    //echo "Your post was added";
         # Set up the view
        // $view = View::instance('v_notes_p_add');
@@ -236,46 +232,21 @@ class notebooks_controller extends base_controller {
          Router::redirect('/notes/');   
 	}
 
- public function delete($notebook_id) {
+ public function delete($tag_id) {
 
-        # Find the second next notebook and move all notes to this notebook, 
-        # if it is the last notebook then do not delete the nootebook
-        $q = 'SELECT count(*) 
-              FROM notebooks
-              WHERE notebooks.user_id = '.$this->user->user_id .'
-              ORDER BY notebooks.modified DESC
-                        ';
 
-        if (DB::instance(DB_NAME)->select_field($q)>1){
-                    $q = 'SELECT notebook_id
-                        FROM notebooks
-                        WHERE notebooks.user_id = '.$this->user->user_id .'
-                        AND notebooks.notebook_id != '.$notebook_id .'
-                        ORDER BY notebooks.modified 
-                        LIMIT 1                    ';
-                      $the_other_notebook = DB::instance(DB_NAME)->select_field($q);
-                      // change all notes to this other notebook
-                    $q = ' UPDATE notes SET notebook_id='.$the_other_notebook.'
-                           WHERE notebook_id='.$notebook_id;
-                     DB::instance(DB_NAME)->query($q);      
+        //delete the tag      
 
-        //delete the notebook       
+        $where_condition = 'WHERE user_id = '.$this->user->user_id.' AND tag_id = '.$tag_id;
+        DB::instance(DB_NAME)->delete('tags', $where_condition);
 
-        $where_condition = 'WHERE user_id = '.$this->user->user_id.' AND notebook_id = '.$notebook_id;
-        DB::instance(DB_NAME)->delete('notebooks', $where_condition);}
-
-        else
-        {
-
-            // This is the last notebook and it cant be deleted
-            // Print an error message - work in progress
-        }
+       
 
         
         # Send them back to users own post list
         Router::redirect("/notes/index");
-
 }
+
 
 
 }
