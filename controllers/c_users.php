@@ -129,7 +129,7 @@ class users_controller extends base_controller {
                 if(!$token){  
                        Router::redirect("/users/login/error"); 
                 }
-                #if token is found then setcookie and reroute to posts
+                #if token is found then setcookie and reroute to notes
                 else{
            
                       setcookie('token',$token,strtotime('+2 week'),'/');
@@ -269,9 +269,9 @@ class users_controller extends base_controller {
                     'last_name'=>$_POST['last_name'],
                     'email'=>$_POST['email']
                     );
-        # update database and redirect to posts
+        # update database and redirect to notes
         DB::instance(DB_NAME)->update('users',$data,'WHERE user_id=' .$this->user->user_id);
-        Router::redirect('/posts/');
+        Router::redirect('/notes/');
         
           
     }

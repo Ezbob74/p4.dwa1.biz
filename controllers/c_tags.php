@@ -10,7 +10,7 @@ class tags_controller extends base_controller {
             die('Members Only Click here to <a href="/users/login">Login</a>');
     	}
     } 
-# View the user's notebooks
+# View the user's tags
     public function index($tag_id){
         
 
@@ -26,7 +26,7 @@ class tags_controller extends base_controller {
                     FROM notes
                     WHERE notes.user_id = '.$this->user->user_id.'
                         ORDER BY notes.modified DESC';
-                 // echo $q;
+                 
                 # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
                 
@@ -34,19 +34,19 @@ class tags_controller extends base_controller {
                     FROM notebooks
                     WHERE notebooks.user_id = '.$this->user->user_id.'
                         ORDER BY notebooks.modified DESC';
-                 // echo $q;
-                # Run the query, store the results in the variable $notes
+                
+                # Run the query, store the results in the variable $notebooks
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
         
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
                         ORDER BY tags.modified DESC';
-                 // echo $q;
-                # Run the query, store the results in the variable $notes
+                 
+                # Run the query, store the results in the variable $tags
         $tags = DB::instance(DB_NAME)->select_rows($q);
        
-        $this->template->title   = APP_NAME. " :: Notebooks";
+        $this->template->title   = APP_NAME. " :: Tags";
 
             # Query notes to get the users notes
 
@@ -63,19 +63,13 @@ class tags_controller extends base_controller {
                 $q = 'SELECT * 
                     FROM tags
                     WHERE tags.tag_id = '.$tag_id ;
-                  //  ORDER BY notes.modified DESC
-                  //  LIMIT 1';
             }
                 
-        # Execute this query with the select_array method
-        #
-               // echo $q;
         $currenttag = DB::instance(DB_NAME)->select_rows($q);
-        # Pass data to the View
-       // if( empty( $currentnote ) ){
-       // echo "empty";}
+        
+        //Setup the template for each column
+
         $this->template->content1->tags = $tags;   
-        $this->template->content2->newnote = 1;
         $this->template->content3->notebook_id = $notebook_id;
         
         $this->template->content3->currenttag=$currenttag;
@@ -100,40 +94,28 @@ class tags_controller extends base_controller {
     }
     public function tag($tag_id){
         # looks for urls and make them links , also strip tags    
-        
-        
 
-
-                if (!empty($_POST)){
-                        $_POST['tag'] = strip_tags($_POST['tag']);
-                        $_POST['tag'] = Utils::make_urls_links($_POST['tag']);
-                        //$_POST['user_id'] = $this->user->user_id;
-                        //$_POST['created'] = Time::now();
-                        $_POST['modified'] = Time::now();
-                      
-                   
-                        
-                    
-                          $where_condition = 'WHERE tag_id = '.$_POST['tag_id'];
-                        # insert the notes
-                        DB::instance(DB_NAME)->update_row('tags',$_POST,$where_condition);
-                }
-                else{
-                        $_POST['tag_id']=$tag_id;
-
+        if (!empty($_POST)){
+                $_POST['tag'] = strip_tags($_POST['tag']);
+                $_POST['tag'] = Utils::make_urls_links($_POST['tag']);
+                $_POST['modified'] = Time::now();
+                $where_condition = 'WHERE tag_id = '.$_POST['tag_id'];
+                     # insert the notes
+                DB::instance(DB_NAME)->update_row('tags',$_POST,$where_condition);
+            }
+        else{
+                $_POST['tag_id']=$tag_id;
                 }
 
-                $q = "SELECT *
-                    FROM tags 
-                    WHERE tag_id=".$_POST['tag_id'];
+        $q = "SELECT *
+              FROM tags 
+              WHERE tag_id=".$_POST['tag_id'];
 
                 # Execute the query to get all the users. 
                 # Store the result array in the variable $users
-                $tag = DB::instance(DB_NAME)->select_row($q);
+        $tag = DB::instance(DB_NAME)->select_row($q);
 
             
-        //$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
-        //echo "Your post was added";
         # Set up the view
         $view = View::instance('v_tags_tag');
 
@@ -144,14 +126,13 @@ class tags_controller extends base_controller {
         # Render the view
         echo $view;     
 
-
-
        // Router::redirect('/notes/note');   
     }
 
 
- # this function is to to view the add posts    
+ # this function is to to view the add tags    
 	public function add() {
+        //setup the view for all three columns
 
         $this->template->content1 = View::instance("v_notes_index1");
         $this->template->content2 = View::instance("v_notes_index2");
@@ -159,18 +140,20 @@ class tags_controller extends base_controller {
 
         $this->template->title= APP_NAME. " :: Add tag ";
         // add required js and css files to be used in the form
-     //   $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
-       //                      '/js/jquery.validationEngine.js',
+        //   $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
+        //                      '/js/jquery.validationEngine.js',
         //                     '/css/validationEngine.jquery.css'
-         //                    );
-        # Load JS files
-         $q = 'SELECT *
-                    FROM notebooks
-                    WHERE notebooks.user_id = '.$this->user->user_id.'
-                        ORDER BY notebooks.modified DESC';
+        //                    );
+        
+        //get the noteboks
+        $q = 'SELECT *
+              FROM notebooks
+              WHERE notebooks.user_id = '.$this->user->user_id.'
+              ORDER BY notebooks.modified DESC';
                  // echo $q;
                 # Run the query, store the results in the variable $notes
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
+     
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
@@ -201,7 +184,7 @@ class tags_controller extends base_controller {
 
 	}
 
-    #    this function is to add notes   
+    #    this function is to add tags   
 	public function p_add(){
         # looks for urls and make them links , also strip tags    
 		$_POST['tag'] = strip_tags($_POST['tag']);
@@ -210,29 +193,14 @@ class tags_controller extends base_controller {
 		$_POST['created'] = Time::now();
 		$_POST['modified'] = Time::now();
         
-        //$_POST['notebook_id'] = DB::instance(DB_NAME)->select_field('SELECT notebook_id FROM notebooks 
-         //                       WHERE user_id = '.$_POST['user_id'].' ORDER BY 
-           //                     created  LIMIT 1');;
         
         # insert the notes
 		$new_note_id = DB::instance(DB_NAME)->insert('tags',$_POST);
-	    //echo "Your post was added";
-        # Set up the view
-       // $view = View::instance('v_notes_p_add');
-
-        # Pass data to the view
-        // $view->created = Time::display(Time::now());
-        //$view->new_note_id = $new_note_id;
-
-        # Render the view
-        //echo $view;     
-
-
-
-         Router::redirect('/notes/');   
+	    
+        Router::redirect('/notes/');   
 	}
-
- public function delete($tag_id) {
+    // delete tags 
+    public function delete($tag_id) {
 
 
         //delete the tag      

@@ -5,10 +5,10 @@
 
 				<form id='formID' method='post' action='/notes/p_add'>
 					Title: <BR>
-					<input value='Untitled' type='text' name='title' required><BR>
+					<input value='Untitled'  class="validate[required]" type='text' name='title' required><BR>
 					Body:
 					<br>
-					<textarea name='body' rows="20" cols="50" required></textarea>
+					<textarea class="validate[required]" name='body' rows="20" cols="50" required></textarea>
 					<BR><BR>
 						
 					<input type='Submit' id='ADD_Note' value='Add Note'>

@@ -126,17 +126,9 @@ class notes_controller extends base_controller {
         
 
        
-
-        
-        //test
-       
-
-        # Render the View
-        # Load JS files
         $client_files_body = Array("/js/jquery.form.js",
                                    "/js/notes_note.js"
                                     );
-        //  $this->template->client_files_head=Utils::load_client_files($client_files_head);
         $this->template->client_files_body = Utils::load_client_files($client_files_body); 
 
 
@@ -144,83 +136,72 @@ class notes_controller extends base_controller {
         echo $this->template;
 
     }
+    // this receives the POST from the form
     public function note($note_id=NULL){
+    
         # looks for urls and make them links , also strip tags    
         
-                if (!empty($_POST)){
-                        $_POST['body'] = strip_tags($_POST['body']);
-                        $_POST['body'] = Utils::make_urls_links($_POST['body']);
-                        //$_POST['user_id'] = $this->user->user_id;
-                        //$_POST['created'] = Time::now();
-                        $_POST['modified'] = Time::now();
-                        $_POST['title'] = strip_tags($_POST['title']);
-                        $_POST['title'] = Utils::make_urls_links($_POST['title']);
-                   // echo "update";    
+
+        if (!empty($_POST)){
+                // get the post array ready
+                $_POST['body'] = strip_tags($_POST['body']);
+                $_POST['body'] = Utils::make_urls_links($_POST['body']);
+                $_POST['modified'] = Time::now();
+                $_POST['title'] = strip_tags($_POST['title']);
+                $_POST['title'] = Utils::make_urls_links($_POST['title']);
+                // use this array to submit update row to database
+                // as the original has a few more forms objects not in the database          
+                $_POST1 = array(
+                        'body' => $_POST['body'],
+                        'modified'=> $_POST['modified'],
+                        'title'=>  $_POST['title'],
+                        'note_id' => $_POST['note_id'],
+                         'notebook_id' => $_POST['notebook_id']
+                        );
+
+                $where_condition = 'WHERE note_id = '.$_POST['note_id'];
+                      # insert the notes
+                DB::instance(DB_NAME)->update_row('notes',$_POST1,$where_condition);
+
+                // delete all existing tags_notes for the note        
+                DB::instance(DB_NAME)->delete('tag_note',$where_condition);
                         
-                        $_POST1 = array(
-                            'body' => $_POST['body'],
-                            'modified'=> $_POST['modified'],
-                            'title'=>  $_POST['title'],
-                            'note_id' => $_POST['note_id'],
-                            'notebook_id' => $_POST['notebook_id']
-                            );
-
-                       // echo '<pre>';
-                       // print_r($_POST['tag_id']);   
-                       // echo '</pre>'; 
-                        $where_condition = 'WHERE note_id = '.$_POST['note_id'];
-                        # insert the notes
-                        DB::instance(DB_NAME)->update_row('notes',$_POST1,$where_condition);
-
-                        
-                       // $where_condition='where note_id='.$_POST['note_id'];
-                        $Numberofrows= DB::instance(DB_NAME)->delete('tag_note',$where_condition);
-                          //construct an array  
-                     
-
-                        $tagsarray = $_POST['tag_id'];    
+                //construct an array  
+                
+                $tagsarray = $_POST['tag_id'];    
                            
-                           
+                // send the data to an array           
                          
-                        foreach ($tagsarray as $value){
+                foreach ($tagsarray as $value){
                          
-                          $data[]=  Array('tag_id' => $value, 'note_id' => $_POST['note_id'] , 'modified' => $_POST['modified'] );
-                        } 
-                            
-                        if(!empty($data)){   
+                        $data[]=  Array('tag_id' => $value, 'note_id' => $_POST['note_id'] , 'modified' => $_POST['modified'] );
+                       } 
+                // if it is not empty then insert them in the tag_note database           
+                if(!empty($data)){   
                         DB::instance(DB_NAME)->insert_rows('tag_note',$data);
                           }
-                            
-                            
-                                            
 
                 }
+                //if POST is empty get the note_id from the function
+        else{
+                $_POST['note_id']=$note_id;
+
+        }
 
 
+        $q = "SELECT *
+              FROM notes 
+              WHERE note_id=".$_POST['note_id'];
 
-                        
-                else{
-                        $_POST['note_id']=$note_id;
-
-                }
-
-
-                $q = "SELECT *
-                    FROM notes 
-                    WHERE note_id=".$_POST['note_id'];
-
-                # Execute the query to get all the users. 
-                # Store the result array in the variable $users
-                $note = DB::instance(DB_NAME)->select_row($q);
+        # Execute the query to get all the notes. 
+        # Store the result array in the variable $note
+        $note = DB::instance(DB_NAME)->select_row($q);
 
             
-        //$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
-        //echo "Your post was added";
         # Set up the view
         $view = View::instance('v_notes_note');
 
         # Pass data to the view
-        //$view->created     = $_POST['created'];
         $view->note_body = $note['body'];
         $view->created = Time::display(Time::now());
         # Render the view
@@ -232,19 +213,20 @@ class notes_controller extends base_controller {
     }
 
 
-    # this function is to to view the add posts    
+    # this function is to to view the add notes    
 	public function add() {
 
+        //setup the three column
 		$this->template->content1 = View::instance("v_notes_index1");
         $this->template->content2 = View::instance("v_notes_index2");
         $this->template->content3 = View::instance("v_notes_add3");
 
         $this->template->title= APP_NAME. " :: Add Note ";
         // add required js and css files to be used in the form
-     //   $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
-       //                      '/js/jquery.validationEngine.js',
-        //                     '/css/validationEngine.jquery.css'
-         //                    );
+        $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
+                             '/js/jquery.validationEngine.js',
+                             '/css/validationEngine.jquery.css'
+                             );
         # Load JS files
          $q = 'SELECT *
                     FROM notes
@@ -272,9 +254,10 @@ class notes_controller extends base_controller {
 
 
         $client_files_body = Array("/js/jquery.form.js",
-                            "/js/notes_add.js"
+                            "/js/notes_add.js",
+                            "js/notes_validation.js"
                             );
-      //  $this->template->client_files_head=Utils::load_client_files($client_files_head);
+       $this->template->client_files_head=Utils::load_client_files($client_files_head);
         $this->template->client_files_body = Utils::load_client_files($client_files_body); 
 
         $this->template->content2->notes = $notes;
@@ -300,32 +283,21 @@ class notes_controller extends base_controller {
         
         # insert the notes
 		$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
-	    //echo "Your post was added";
-        # Set up the view
-       //$view = View::instance('v_notes_p_add');
-
-        # Pass data to the view
-        // $view->created = Time::display(Time::now());
-        //$view->new_note_id = $new_note_id;
-
-        # Render the view
-       // echo $view;     
-
-
+	  
 
          Router::redirect('/notes/index');   
 	}
     
 
 
- # delete posts
+ # delete notes
     public function delete($note_id) {
 
-        # Delete users own posts only
+        # Delete users own notes only
         $where_condition = 'WHERE user_id = '.$this->user->user_id.' AND note_id = '.$note_id;
         DB::instance(DB_NAME)->delete('notes', $where_condition);
 
-        # Send them back to users own post list
+        # Send them back to users own notes list
         Router::redirect("/notes/");
 
 }
