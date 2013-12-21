@@ -93,7 +93,7 @@ class users_controller extends base_controller {
     # this sets up email password view and displays error if any
     public function emailpassword($error = NULL) {
         
-        $this->template->content=View::instance('v_users_emailpassword');    
+        $this->template->content3=View::instance('v_users_emailpassword');    
         $this->template->title= APP_NAME. " :: Login";
         // add required js and css files to be used in the form
         $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
@@ -102,7 +102,7 @@ class users_controller extends base_controller {
                              );
         $this->template->client_files_head=Utils::load_client_files($client_files_head);    
         # Pass data to the view
-        $this->template->content->error = $error;
+        $this->template->content3->error = $error;
 
         echo $this->template;
 

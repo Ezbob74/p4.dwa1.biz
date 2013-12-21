@@ -29,17 +29,17 @@
 		<div id="MenuHeader">
 		 	<a class="nav-link2" href='/notes/'>Home</a>:: 
             <?php if($user): ?>
-                <a class="nav-link"  href='/notes/add'>Add Note</a> :: 
-                <a class="nav-link" href='/notebooks/add'>Add Notebook</a> :: 
-                <a class="nav-link" href='/tags/add'>Create Tag</a> :: 
-                <a class="nav-link" href='/users/editprofile'>Edit Profile</a> :: 
-                <a class="nav-link" href='/users/logout'>Logout</a>
+                <a class="nav-link2"  href='/notes/add'>Add Note</a> :: 
+                <a class="nav-link2" href='/notebooks/add'>Add Notebook</a> :: 
+                <a class="nav-link2" href='/tags/add'>Create Tag</a> :: 
+                <a class="nav-link2" href='/users/editprofile'>Edit Profile</a> :: 
+                <a class="nav-link2" href='/users/logout'>Logout</a>
             <?php else: ?>
-                <a class="nav-link" href='/users/signup'>Sign Up</a> :: 
-                <a class="nav-link" href='/users/login'>Log In</a>
+                <a class="nav-link2" href='/users/signup'>Sign Up</a> :: 
+                <a class="nav-link2" href='/users/login'>Log In</a>
             <?php endif; ?>
             <?php if($user): ?>
-                Logged in as <?=$user->first_name?> <?=$user->last_name?><br>
+               <BR> Logged in as <?=$user->first_name?> <br>
             <?php endif; ?>
 		       
 		</div>

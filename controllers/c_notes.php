@@ -10,51 +10,51 @@ class notes_controller extends base_controller {
             die('Members Only Click here to <a href="/users/login">Login</a>');
     	}
     } 
-# View the user's notes
+    # View the user's notes and is the main page which most pages redirect to it 
     public function index($note_id=NULL){
         
 
          # Set up the View
+        // left column
         $this->template->content1 = View::instance('v_notes_index1');
-       //test
+        // middle column
         $this->template->content2 = View::instance('v_notes_index2');
-
+        // right column
         $this->template->content3 = View::instance('v_notes_index3');
 
-
+        // all users notes
         $q = 'SELECT *
                     FROM notes
                     WHERE notes.user_id = '.$this->user->user_id.'
                         ORDER BY notes.modified DESC';
-                 // echo $q;
+                 
                 # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
-                
+        
+        // all users notebooks        
         $q = 'SELECT *
                     FROM notebooks
                     WHERE notebooks.user_id = '.$this->user->user_id.'
                         ORDER BY notebooks.modified DESC';
                  // echo $q;
-                # Run the query, store the results in the variable $notes
+                # Run the query, store the results in the variable $notebooks
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
-        
+       
+        // all tags that belong to the user
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
                         ORDER BY tags.modified DESC';
-                 // echo $q;
-                # Run the query, store the results in the variable $notes
+                
+                # Run the query, store the results in the variable $tags
         $tags = DB::instance(DB_NAME)->select_rows($q);
        
-       
-     
+        
 
-
+        // set the title
         $this->template->title   = APP_NAME. " :: All Notes";
 
-            # Query notes to get the users notes
-
-              
+        // if note_id is not set get the last note that was modified   
 
         if (!$note_id){
                
@@ -65,28 +65,23 @@ class notes_controller extends base_controller {
                         WHERE notes.user_id = '.$this->user->user_id .'
                         ORDER BY notes.modified DESC
                         LIMIT 1';
-               
+                //get note_id
                 $note_id = DB::instance(DB_NAME)->select_field($q);
-                
+                // get the whole row to display
                 $q = 'SELECT * 
                         FROM notes
                         WHERE notes.user_id = '.$this->user->user_id .'
                         ORDER BY notes.modified DESC
                         LIMIT 1';
-                                     
-                     
-
-                 // need to revisit this
                      
         }
+
         else{
+                // if thers is a note_id specified use that to get a row
                 $q = 'SELECT * 
                     FROM notes
                     WHERE notes.note_id = '.$note_id ;
-                  //  ORDER BY notes.modified DESC
-                  //  LIMIT 1';
-                 
-                       // ORDER BY tag_note.modified DESC  
+               
         }
         
         // get tags to display in the page
@@ -99,33 +94,38 @@ class notes_controller extends base_controller {
                         
 
                        
-        # Execute this query with the select_array method
+        # Get current note
         #
-               // echo $q;
+            
         $currentnote = DB::instance(DB_NAME)->select_rows($q);
 
-        $tag_note = DB::instance(DB_NAME)->select_rows($q1);   
+        if ($note_id==NULL){
+
+       // No need to display a message here
+       // error checking          
+        }
+
+        else {
+           $tag_note = DB::instance(DB_NAME)->select_rows($q1);   
+       }
+
         $tag_note = array_map('current', $tag_note);
 
-     //  echo '<pre>';
-       //                print_r($tag_note);   
-         ///              print_r($tags);
-            //           echo '</pre>'; 
+        // this is for left column
+        $this->template->content1->notebooks = $notebooks;
+        $this->template->content1->tags = $tags;
+        // this is for middle column
+        $this->template->content2->notes = $notes;
 
-        # Pass data to the View
-       // if( empty( $currentnote ) ){
-       // echo "empty";}
-      
+        // This is for the right column which includes tags, current note, notebooks, and tags related to notes
+        $this->template->content3->tags = $tags;
         $this->template->content3->note_id=$note_id;
         $this->template->content3->currentnote=$currentnote;
         $this->template->content3->notebooks = $notebooks;
-
         $this->template->content3->tag_note = $tag_note;
         
-        $this->template->content1->notebooks = $notebooks;
-        $this->template->content1->tags = $tags;
-        $this->template->content2->notes = $notes;
-        $this->template->content3->tags = $tags;
+
+       
 
         
         //test
@@ -187,9 +187,9 @@ class notes_controller extends base_controller {
                           $data[]=  Array('tag_id' => $value, 'note_id' => $_POST['note_id'] , 'modified' => $_POST['modified'] );
                         } 
                             
-                           
+                        if(!empty($data)){   
                         DB::instance(DB_NAME)->insert_rows('tag_note',$data);
-                          
+                          }
                             
                             
                                             

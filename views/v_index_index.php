@@ -8,6 +8,6 @@
 	&bull; 1. It is a Note taking applocation. <br>
 	&bull; 2. It is Web based.<BR>
 	&bull; 3. It supports multiple Notebooks.<BR>
-	&bull; 4. It supports tages.<BR>
-
+	&bull; 4. It supports tags.<BR>
+	&bull; 4. Create an account and give it a try!<BR>
 <?php endif; ?>
