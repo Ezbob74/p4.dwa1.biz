@@ -9,7 +9,7 @@ This application is a basic note taking application that you can use it to
 2. Assign notes to notebooks 
 3. Assign tags to notes
 4. Add and edit notebooks
-5. Add and edit tags
+5. Add multiple tags and edit them
 6. User signup, edit profile, and email password 
 
 User area lets user sign up, edit profile and email password. The form validation is based on jquery. 
