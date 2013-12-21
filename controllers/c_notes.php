@@ -11,7 +11,7 @@ class notes_controller extends base_controller {
     	}
     } 
 # View the user's notes
-    public function index($note_id){
+    public function index($note_id=NULL){
         
 
          # Set up the View
@@ -46,45 +46,86 @@ class notes_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $tags = DB::instance(DB_NAME)->select_rows($q);
        
+       
+     
+
+
         $this->template->title   = APP_NAME. " :: All Notes";
 
             # Query notes to get the users notes
 
               
 
-            if (!$note_id){
+        if (!$note_id){
+               
+            // first get  a note_id if its missing
+            // this is used if no note_id is passed
+                $q = 'SELECT note_id 
+                        FROM notes
+                        WHERE notes.user_id = '.$this->user->user_id .'
+                        ORDER BY notes.modified DESC
+                        LIMIT 1';
+               
+                $note_id = DB::instance(DB_NAME)->select_field($q);
+                
                 $q = 'SELECT * 
                         FROM notes
                         WHERE notes.user_id = '.$this->user->user_id .'
                         ORDER BY notes.modified DESC
                         LIMIT 1';
-            }
-            else{
+                                     
+                     
+
+                 // need to revisit this
+                     
+        }
+        else{
                 $q = 'SELECT * 
                     FROM notes
                     WHERE notes.note_id = '.$note_id ;
                   //  ORDER BY notes.modified DESC
                   //  LIMIT 1';
-            }
-                
+                 
+                       // ORDER BY tag_note.modified DESC  
+        }
+        
+        // get tags to display in the page
+
+        $q1 = 'SELECT T2.tag_id as Tag_id
+                        FROM tag_note T2
+                        INNER JOIN tags T1 ON T2.tag_id = T1.tag_id
+                        WHERE T1.user_id = '.$this->user->user_id .'
+                        AND T2.note_id='.$note_id; 
+                        
+
+                       
         # Execute this query with the select_array method
         #
                // echo $q;
-            $currentnote = DB::instance(DB_NAME)->select_rows($q);
+        $currentnote = DB::instance(DB_NAME)->select_rows($q);
 
-            
+        $tag_note = DB::instance(DB_NAME)->select_rows($q1);   
+        $tag_note = array_map('current', $tag_note);
+
+     //  echo '<pre>';
+       //                print_r($tag_note);   
+         ///              print_r($tags);
+            //           echo '</pre>'; 
 
         # Pass data to the View
        // if( empty( $currentnote ) ){
        // echo "empty";}
       
-        
+        $this->template->content3->note_id=$note_id;
         $this->template->content3->currentnote=$currentnote;
         $this->template->content3->notebooks = $notebooks;
 
+        $this->template->content3->tag_note = $tag_note;
+        
         $this->template->content1->notebooks = $notebooks;
-         $this->template->content1->tags = $tags;
+        $this->template->content1->tags = $tags;
         $this->template->content2->notes = $notes;
+        $this->template->content3->tags = $tags;
 
         
         //test
@@ -103,12 +144,9 @@ class notes_controller extends base_controller {
         echo $this->template;
 
     }
-    public function note($note_id){
+    public function note($note_id=NULL){
         # looks for urls and make them links , also strip tags    
         
-        
-
-
                 if (!empty($_POST)){
                         $_POST['body'] = strip_tags($_POST['body']);
                         $_POST['body'] = Utils::make_urls_links($_POST['body']);
@@ -119,14 +157,53 @@ class notes_controller extends base_controller {
                         $_POST['title'] = Utils::make_urls_links($_POST['title']);
                    // echo "update";    
                         
+                        $_POST1 = array(
+                            'body' => $_POST['body'],
+                            'modified'=> $_POST['modified'],
+                            'title'=>  $_POST['title'],
+                            'note_id' => $_POST['note_id'],
+                            'notebook_id' => $_POST['notebook_id']
+                            );
+
+                       // echo '<pre>';
+                       // print_r($_POST['tag_id']);   
+                       // echo '</pre>'; 
                         $where_condition = 'WHERE note_id = '.$_POST['note_id'];
                         # insert the notes
-                        DB::instance(DB_NAME)->update_row('notes',$_POST,$where_condition);
+                        DB::instance(DB_NAME)->update_row('notes',$_POST1,$where_condition);
+
+                        
+                       // $where_condition='where note_id='.$_POST['note_id'];
+                        $Numberofrows= DB::instance(DB_NAME)->delete('tag_note',$where_condition);
+                          //construct an array  
+                     
+
+                        $tagsarray = $_POST['tag_id'];    
+                           
+                           
+                         
+                        foreach ($tagsarray as $value){
+                         
+                          $data[]=  Array('tag_id' => $value, 'note_id' => $_POST['note_id'] , 'modified' => $_POST['modified'] );
+                        } 
+                            
+                           
+                        DB::instance(DB_NAME)->insert_rows('tag_note',$data);
+                          
+                            
+                            
+                                            
+
                 }
+
+
+
+                        
                 else{
                         $_POST['note_id']=$note_id;
 
                 }
+
 
                 $q = "SELECT *
                     FROM notes 
@@ -176,7 +253,7 @@ class notes_controller extends base_controller {
                  // echo $q;
                 # Run the query, store the results in the variable 
         $notes = DB::instance(DB_NAME)->select_rows($q);
-
+        
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
@@ -184,7 +261,7 @@ class notes_controller extends base_controller {
                  // echo $q;
                 # Run the query, store the results in the variable $notes
         $tags = DB::instance(DB_NAME)->select_rows($q);
-
+        
         $q = 'SELECT *
                     FROM notebooks
                     WHERE notebooks.user_id = '.$this->user->user_id.'
@@ -202,8 +279,7 @@ class notes_controller extends base_controller {
 
         $this->template->content2->notes = $notes;
 		$this->template->content1->notebooks = $notebooks;
-        $this->template->content1->tags=$tags;
-
+        $this->template->content1->tags = $tags;
         echo $this->template;
 
 	}
@@ -240,103 +316,8 @@ class notes_controller extends base_controller {
          Router::redirect('/notes/index');   
 	}
     
- 
 
 
- /*
-
-# This function shows users own posts
-    public function own(){
-
-         # Set up the View
-        $this->template->content = View::instance('v_posts_own');
-        $this->template->title   = APP_NAME. " :: My Posts";
-
-        # Query posts of the user
-        $q = 'SELECT 
-            posts.post_id,
-            posts.content,
-            posts.created,
-            posts.user_id AS post_user_id
-          
-        FROM posts
-        WHERE posts.user_id  ='.$this->user->user_id ;
-        //echo $q;
-
-        # Run the query, store the results in the variable $posts
-        $posts = DB::instance(DB_NAME)->select_rows($q);
-
-        # Pass data to the View
-        $this->template->content->posts = $posts;
-
-        # Render the View
-        echo $this->template;
-
-
-    }
-    # show list of users and whether they are being followed or not
-	public function users() {
-        # Set up the View
-        $this->template->content = View::instance("v_posts_users");
-        $this->template->title   = APP_NAME. " :: Users";
-
-        # Build the query to get all the users excluding the user
-        $q = "SELECT *
-            FROM users 
-            WHERE user_id!=".$this->user->user_id;
-
-        # Execute the query to get all the users. 
-        # Store the result array in the variable $users
-        $users = DB::instance(DB_NAME)->select_rows($q);
-
-        # Build the query to figure out what connections does this user already have? 
-        # I.e. who are they following
-        
-        $q ="SELECT * 
-                FROM users_users
-                WHERE user_id = ".$this->user->user_id;
-
-        # Execute this query with the select_array method
-        # select_array will return our results in an array and use the "users_id_followed" field as the index.
-        # This will come in handy when we get to the view
-        # Store our results (an array) in the variable $connections
-        $connections = DB::instance(DB_NAME)->select_array($q, 'user_id_followed');
-
-        # Pass data (users and connections) to the view
-        $this->template->content->users       = $users;
-        $this->template->content->connections = $connections;
-
-        # Render the view
-        echo $this->template;
-} 
-    # follow user
-	public function follow($user_id_followed) {
-
-        # Prepare the data array to be inserted
-        $data = Array(
-           "created" => Time::now(),
-            "user_id" => $this->user->user_id,
-            "user_id_followed" => $user_id_followed
-        );
-
-        # Do the insert
-        DB::instance(DB_NAME)->insert('users_users', $data);
-
-        # Send them back
-        Router::redirect("/posts/users");
-
-}
- # unfollow user
-    public function unfollow($user_id_followed) {
-
-        # Delete this connection
-        $where_condition = 'WHERE user_id = '.$this->user->user_id.' AND user_id_followed = '.$user_id_followed;
-        DB::instance(DB_NAME)->delete('users_users', $where_condition);
-
-        # Send them back
-        Router::redirect("/posts/users");
-
-}*/
  # delete posts
     public function delete($note_id) {
 

@@ -23,7 +23,17 @@
 				</select>
 				<?php endif; ?> 
 				<BR>
-
+				
+				<?php if($tags): ?>
+		 		<select name='tag_id[]' multiple>
+		 		<?php foreach($tags as $ctag): ?>	
+				<option value='<?=$ctag['tag_id']?>' <?php if((in_array($ctag['tag_id'],$tag_note))) echo 'selected'; ?> >
+						<?=$ctag['tag']?>
+				</option>
+				<?php endforeach; ?>
+				</select>
+				<?php endif; ?> 
+				<BR>
 
 				<input type='Submit' value='Save Note'>
 				</form>

@@ -98,15 +98,15 @@ class tags_controller extends base_controller {
         echo $this->template;
 
     }
-    public function notebook($notebook_id){
+    public function tag($tag_id){
         # looks for urls and make them links , also strip tags    
         
         
 
 
                 if (!empty($_POST)){
-                        $_POST['name'] = strip_tags($_POST['name']);
-                        $_POST['name'] = Utils::make_urls_links($_POST['name']);
+                        $_POST['tag'] = strip_tags($_POST['tag']);
+                        $_POST['tag'] = Utils::make_urls_links($_POST['tag']);
                         //$_POST['user_id'] = $this->user->user_id;
                         //$_POST['created'] = Time::now();
                         $_POST['modified'] = Time::now();
@@ -114,32 +114,32 @@ class tags_controller extends base_controller {
                    
                         
                     
-                          $where_condition = 'WHERE notebook_id = '.$_POST['notebook_id'];
+                          $where_condition = 'WHERE tag_id = '.$_POST['tag_id'];
                         # insert the notes
-                        DB::instance(DB_NAME)->update_row('notebooks',$_POST,$where_condition);
+                        DB::instance(DB_NAME)->update_row('tags',$_POST,$where_condition);
                 }
                 else{
-                        $_POST['notebook_id']=$notebook_id;
+                        $_POST['tag_id']=$tag_id;
 
                 }
 
                 $q = "SELECT *
-                    FROM notebooks 
-                    WHERE notebook_id=".$_POST['notebook_id'];
+                    FROM tags 
+                    WHERE tag_id=".$_POST['tag_id'];
 
                 # Execute the query to get all the users. 
                 # Store the result array in the variable $users
-                $notebook = DB::instance(DB_NAME)->select_row($q);
+                $tag = DB::instance(DB_NAME)->select_row($q);
 
             
         //$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
         //echo "Your post was added";
         # Set up the view
-        $view = View::instance('v_notebooks_note');
+        $view = View::instance('v_tags_tag');
 
         # Pass data to the view
         //$view->created     = $_POST['created'];
-        $view->note_body = $notebook['name'];
+        $view->tag_name = $tag['name'];
         $view->created = Time::display(Time::now());
         # Render the view
         echo $view;     
