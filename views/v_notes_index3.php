@@ -2,9 +2,9 @@
 		 		<?php foreach($currentnote as $cnote): ?>
 
 				<strong>Note </strong><BR><BR> <a class="nav-link" href='/notes/delete/<?=$cnote['note_id']?>'>Delete Note</a>
-				<!-- Show notes and display a link to users profile -->
+				
 				<form id='formID' method='post' action='/notes/note/'>
-					
+				<!-- Show notes  -->	
     			Title: <BR>
     			<input value='<?=$cnote['title']?>' type='text' name='title' required><BR>
 				Body: <BR>
@@ -12,7 +12,7 @@
 				<input value='<?=$cnote['notebook_id']?>' type='text' name='notebook_id' hidden>
 				<input value='<?=$cnote['note_id']?>' type='text' name='note_id' hidden>
 				<BR>
-
+				<!-- Show notebooks  -->	
 				<?php if($notebooks): ?>
 		 		<select name='notebook_id'>
 		 		<?php foreach($notebooks as $cnotebook): ?>	
@@ -23,7 +23,7 @@
 				</select>
 				<?php endif; ?> 
 				<BR>
-				
+				<!-- Show tags  -->
 				<?php if($tags): ?>
 		 		<select name='tag_id[]' multiple>
 		 		<?php foreach($tags as $ctag): ?>	

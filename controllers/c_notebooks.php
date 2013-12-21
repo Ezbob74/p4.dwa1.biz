@@ -1,5 +1,5 @@
 <?php 
-# This is the notes controller
+# This is the notebooks controller
 
 class notebooks_controller extends base_controller {
 	
@@ -14,13 +14,12 @@ class notebooks_controller extends base_controller {
     public function index($notebook_id){
         
 
-         # Set up the View
+         # Set up the View for three columns
         $this->template->content1 = View::instance('v_notes_index1');
-       //test
         $this->template->content2 = View::instance('v_notes_index2');
-
         $this->template->content3 = View::instance('v_notebooks_index3');
 
+        // get notes
 
         $q = 'SELECT *
                     FROM notes
@@ -30,6 +29,7 @@ class notebooks_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $notes = DB::instance(DB_NAME)->select_rows($q);
         
+        // get tags
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
@@ -38,7 +38,7 @@ class notebooks_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $tags = DB::instance(DB_NAME)->select_rows($q);
        
-
+        // get notebooks
         $q = 'SELECT *
                     FROM notebooks
                     WHERE notebooks.user_id = '.$this->user->user_id.'
@@ -47,21 +47,21 @@ class notebooks_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
         
-       
-            $this->template->title   = APP_NAME. " :: Notebooks";
+        // show title
+        $this->template->title   = APP_NAME. " :: Notebooks";
 
             # Query notes to get the users notes
 
-              
+        // if notebook_id isnt there then get the latest one     
 
-            if (!$notebook_id){
+        if (!$notebook_id){
                 $q = 'SELECT * 
                         FROM notebooks
                         WHERE notes.user_id = '.$this->user->user_id .'
                         ORDER BY notebooks.modified DESC
                         LIMIT 1';
             }
-            else{
+        else{
                 $q = 'SELECT * 
                     FROM notebooks
                     WHERE notebooks.notebook_id = '.$notebook_id ;
@@ -70,12 +70,10 @@ class notebooks_controller extends base_controller {
             }
                 
         # Execute this query with the select_array method
-        #
-               // echo $q;
-            $currentnotebook = DB::instance(DB_NAME)->select_rows($q);
-        # Pass data to the View
-       // if( empty( $currentnote ) ){
-       // echo "empty";}
+       
+        $currentnotebook = DB::instance(DB_NAME)->select_rows($q);
+        # Pass data to the View for all
+       
         $this->template->content2->newnote = 1;
         $this->template->content3->notebook_id = $notebook_id;
         
@@ -100,18 +98,17 @@ class notebooks_controller extends base_controller {
         echo $this->template;
 
     }
+    //editing a notebook
     public function notebook($notebook_id){
         # looks for urls and make them links , also strip tags    
         
         
 
-
-                if (!empty($_POST)){
-                        $_POST['name'] = strip_tags($_POST['name']);
-                        $_POST['name'] = Utils::make_urls_links($_POST['name']);
-                        //$_POST['user_id'] = $this->user->user_id;
-                        //$_POST['created'] = Time::now();
-                        $_POST['modified'] = Time::now();
+        //update the notebook
+        if (!empty($_POST)){
+                $_POST['name'] = strip_tags($_POST['name']);
+                $_POST['name'] = Utils::make_urls_links($_POST['name']);
+                $_POST['modified'] = Time::now();
                       
                    
                         
@@ -120,53 +117,42 @@ class notebooks_controller extends base_controller {
                         # insert the notes
                         DB::instance(DB_NAME)->update_row('notebooks',$_POST,$where_condition);
                 }
-                else{
+        else{
                         $_POST['notebook_id']=$notebook_id;
 
                 }
 
-                $q = "SELECT *
+        $q = "SELECT *
                     FROM notebooks 
                     WHERE notebook_id=".$_POST['notebook_id'];
 
-                # Execute the query to get all the users. 
-                # Store the result array in the variable $users
-                $notebook = DB::instance(DB_NAME)->select_row($q);
+                # Execute the query to get all the notebookss. 
+                # Store the result array in the variable $notebook
+        $notebook = DB::instance(DB_NAME)->select_row($q);
 
-            
-        //$new_note_id = DB::instance(DB_NAME)->insert('notes',$_POST);
-        //echo "Your post was added";
         # Set up the view
         $view = View::instance('v_notebooks_note');
 
         # Pass data to the view
-        //$view->created     = $_POST['created'];
         $view->note_body = $notebook['name'];
         $view->created = Time::display(Time::now());
-        # Render the view
+       
         echo $view;     
 
-
-
-       // Router::redirect('/notes/note');   
     }
 
 
  # this function is to to view the add posts    
 	public function add() {
-
+        // setup the three columns    
         $this->template->content1 = View::instance("v_notes_index1");
         $this->template->content2 = View::instance("v_notes_index2");
 		$this->template->content3 = View::instance("v_notebooks_add3");
 
         $this->template->title= APP_NAME. " :: Add Notebook ";
-        // add required js and css files to be used in the form
-     //   $client_files_head=Array('/js/languages/jquery.validationEngine-en.js',
-       //                      '/js/jquery.validationEngine.js',
-        //                     '/css/validationEngine.jquery.css'
-         //                    );
-        # Load JS files
-         $q = 'SELECT *
+        
+        //notebooks
+        $q = 'SELECT *
                     FROM notebooks
                     WHERE notebooks.user_id = '.$this->user->user_id.'
                         ORDER BY notebooks.modified DESC';
@@ -174,6 +160,7 @@ class notebooks_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $notebooks = DB::instance(DB_NAME)->select_rows($q);
 
+        //list of tags
         $q = 'SELECT *
                     FROM tags
                     WHERE tags.user_id = '.$this->user->user_id.'
@@ -182,6 +169,7 @@ class notebooks_controller extends base_controller {
                 # Run the query, store the results in the variable $notes
         $tags = DB::instance(DB_NAME)->select_rows($q);
 
+        //list of notes
 
         $q = 'SELECT *
                     FROM notes
@@ -205,7 +193,7 @@ class notebooks_controller extends base_controller {
 
 	}
 
-    #    this function is to add notes   
+    #    this function is to add notebooks   
 	public function p_add(){
         # looks for urls and make them links , also strip tags    
 		$_POST['name'] = strip_tags($_POST['name']);
@@ -214,26 +202,12 @@ class notebooks_controller extends base_controller {
 		$_POST['created'] = Time::now();
 		$_POST['modified'] = Time::now();
         
-        //$_POST['notebook_id'] = DB::instance(DB_NAME)->select_field('SELECT notebook_id FROM notebooks 
-         //                       WHERE user_id = '.$_POST['user_id'].' ORDER BY 
-           //                     created  LIMIT 1');;
-        
-        # insert the notes
+         # insert the notebook
 		$new_note_id = DB::instance(DB_NAME)->insert('notebooks',$_POST);
-	    //echo "Your post was added";
-        # Set up the view
-       // $view = View::instance('v_notes_p_add');
-
-        # Pass data to the view
-        // $view->created = Time::display(Time::now());
-        //$view->new_note_id = $new_note_id;
-
-        # Render the view
-        //echo $view;     
+	   
 
 
-
-         Router::redirect('/notes/');   
+        Router::redirect('/notes/');   
 	}
 
  public function delete($notebook_id) {
@@ -272,7 +246,7 @@ class notebooks_controller extends base_controller {
         }
 
         
-        # Send them back to users own post list
+        # Send them back to users own notes list
         Router::redirect("/notes/index");
 
 }

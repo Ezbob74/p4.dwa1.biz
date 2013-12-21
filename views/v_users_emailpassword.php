@@ -13,7 +13,7 @@
           
     </div>
     
-<!-- lDisplay the errors -->    
+<!-- Display the errors -->    
     <?php if(isset($error)): ?>
         <div id='error' class='errors'>
            

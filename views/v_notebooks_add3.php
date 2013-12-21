@@ -1,6 +1,6 @@
 
 
-				<!--add notes view -->
+				<!--add notebook view -->
 				<strong>Add a new notebook</strong><BR><BR>
 
 				<form id='formID' method='post' action='/notebooks/p_add'>

@@ -1,6 +1,6 @@
 
 
-				<!--add notes view -->
+				<!--add tags view -->
 				<strong>Add a new tag</strong><BR><BR>
 
 				<form id='formID' method='post' action='/tags/p_add'>

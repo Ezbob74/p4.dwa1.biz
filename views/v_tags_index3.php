@@ -2,7 +2,7 @@
 		 		<?php foreach($currenttag as $ctag): ?>
 				<strong>Tag </strong><BR><BR> <a href='/tags/delete/<?=$ctag['tag_id']?>'>Delete Tag</a>
 				
-				<!-- Show notes and display a link to users profile -->
+				<!-- Show tags -->
 				<form id='formID' method='post' action='/tags/tag/<?=$ctag['tag_id']?>'>
     			Name: <BR>
     			<input value='<?=$ctag['tag']?>' type='text' name='tag' required><BR>
